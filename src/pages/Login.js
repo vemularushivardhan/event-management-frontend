@@ -42,8 +42,12 @@ const Login = () => {
         navigate(from === '/login' ? '/events' : from);
       }
     } catch (err) {
-      const msg = err.response?.data?.message || 'Invalid email or password. Please try again.';
-      setError(msg);
+      if (!err.response) {
+        setError('Cannot connect to backend server. Please verify the backend API service is running and accessible.');
+      } else {
+        const msg = err.response?.data?.message || 'Invalid email or password. Please try again.';
+        setError(msg);
+      }
     } finally {
       setLoading(false);
     }

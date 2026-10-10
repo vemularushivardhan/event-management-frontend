@@ -40,7 +40,7 @@ const AdminLogin = () => {
       navigate('/admin/dashboard');
     } catch (err) {
       if (!err.response) {
-        setError('Cannot connect to backend server. Please ensure Spring Boot is running on http://localhost:8080.');
+        setError('Cannot connect to backend server. Please verify the backend API service is running and accessible.');
       } else {
         setError(err.response?.data?.message || 'Invalid administrator credentials.');
       }
