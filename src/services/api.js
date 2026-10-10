@@ -1,17 +1,25 @@
 import axios from 'axios';
 
+const rawBaseUrl = process.env.REACT_APP_API_URL || process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api';
+// Normalize baseURL: strip trailing slashes, ensure /api suffix
+let cleanBaseUrl = rawBaseUrl.replace(/\/+$/, '');
+if (!cleanBaseUrl.endsWith('/api')) {
+  cleanBaseUrl += '/api';
+}
+
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || process.env.REACT_APP_API_BASE_URL || 'http://localhost:8080/api',
+  baseURL: cleanBaseUrl,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Request Interceptor: Attach JWT Bearer Token if present
+// Request Interceptor: Attach JWT Bearer Token if present (except on public auth endpoints)
 api.interceptors.request.use(
   (config) => {
+    const isAuthEndpoint = config.url && (config.url.includes('/auth/login') || config.url.includes('/auth/register'));
     const token = localStorage.getItem('token');
-    if (token) {
+    if (token && !isAuthEndpoint) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
